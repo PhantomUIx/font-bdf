@@ -119,11 +119,13 @@ pub fn create(alloc: Allocator, reader: anytype, options: phantom.fonts.Format.L
             .chars => {
                 var count = readInfo(line, .CHARS, .{usize})[0];
 
-                const backgroundBuffer = try alloc.alloc(u8, @divExact(options.colorFormat.width(), 8));
+                const colorLen = @divExact(options.colorFormat.width(), 8);
+
+                const backgroundBuffer = try alloc.alloc(u8, colorLen);
                 defer alloc.free(backgroundBuffer);
                 try vizops.color.writeAnyBuffer(options.colorFormat, backgroundBuffer, options.backgroundColor);
 
-                const foregroundBuffer = try alloc.alloc(u8, @divExact(options.colorFormat.width(), 8));
+                const foregroundBuffer = try alloc.alloc(u8, colorLen);
                 defer alloc.free(foregroundBuffer);
                 try vizops.color.writeAnyBuffer(options.colorFormat, foregroundBuffer, options.foregroundColor);
 
@@ -171,7 +173,7 @@ pub fn create(alloc: Allocator, reader: anytype, options: phantom.fonts.Format.L
                     });
                     errdefer fb.deinit();
 
-                    var i: usize = 0;
+                    var y: usize = 0;
                     while (true) {
                         const line2 = try readLine(alloc, reader) orelse return error.EndOfStream;
                         defer alloc.free(line2);
@@ -189,14 +191,12 @@ pub fn create(alloc: Allocator, reader: anytype, options: phantom.fonts.Format.L
 
                         var set = std.bit_set.ArrayBitSet(u8, 8 * masks.len){ .masks = masks };
                         for (0..8) |x| {
-                            if (set.isSet(x)) {
-                                try fb.write(i, foregroundBuffer);
-                                i += foregroundBuffer.len;
-                            } else {
-                                try fb.write(i, backgroundBuffer);
-                                i += backgroundBuffer.len;
-                            }
+                            const stride = colorLen * bbox[0];
+                            const i = (y * stride) + (x * colorLen);
+                            try fb.write(i, if (set.isSet(x)) foregroundBuffer else backgroundBuffer);
                         }
+
+                        y += 1;
                     }
 
                     try self.glyphs.put(alloc, encoding, .{
