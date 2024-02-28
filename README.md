@@ -1,9 +1,4 @@
-# Template Module
+# BDF Font Module
 
-A basic template module for Phantom UI.
-
-## Using this template
-
-1. Fork this template
-2. Replace `template.module` with your module kind and name in `build.zig` and `build.zig.zon`
-3. Following the core repo code layout in `src/phantom`, implement any of the files you need
+A font module for Phantom UI which provides support for the bdf font format.
+Code comes from [nektro's bdf code for magnolia](https://git.sr.ht/~nektro/magnolia-desktop/tree/master/item/src/bdf.zig).

@@ -11,6 +11,11 @@ pub fn build(b: *std.Build) !void {
     const no_tests = b.option(bool, "no-tests", "skip generating tests") orelse false;
     const scene_backend = b.option(Phantom.SceneBackendType, "scene-backend", "The scene backend to use for the example") orelse .headless;
 
+    const vizops = b.dependency("vizops", .{
+        .target = target,
+        .optimize = optimize,
+    });
+
     const phantom = b.dependency("phantom", .{
         .target = target,
         .optimize = optimize,
@@ -19,12 +24,16 @@ pub fn build(b: *std.Build) !void {
         .@"import-module" = try Phantom.Sdk.ModuleImport.init(&.{}, b.pathFromRoot("src"), b.allocator),
     });
 
-    const module = b.addModule("phantom.template.module", .{
+    const module = b.addModule("phantom.font.bdf", .{
         .root_source_file = .{ .path = b.pathFromRoot("src/phantom.zig") },
         .imports = &.{
             .{
                 .name = "phantom",
                 .module = phantom.module("phantom"),
+            },
+            .{
+                .name = "vizops",
+                .module = vizops.module("vizops"),
             },
         },
     });
@@ -41,7 +50,7 @@ pub fn build(b: *std.Build) !void {
         .optimize = optimize,
     });
     exe_example.root_module.addImport("phantom", phantom.module("phantom"));
-    exe_example.root_module.addImport("phantom.template.module", module);
+    exe_example.root_module.addImport("phantom.font.bdf", module);
     exe_example.root_module.addImport("options", exe_options.createModule());
     b.installArtifact(exe_example);
 
