@@ -8,8 +8,8 @@
             .hash = "1220b63dbf06d4980306dc1866b06cf5fee47756dd5f91b0349f7c115308b253cea0",
         },
         .vizops = .{
-            .url = "https://github.com/MidstallSoftware/vizops/archive/626d6bbf78fe7d192d0dea77abb7d99d272f7039.tar.gz",
-            .hash = "1220f1f74b130449d782e38792cbe5d6b519ff706dd4f260f8cb0ced10a1f03f8eab",
+            .url = "https://github.com/MidstallSoftware/vizops/archive/cb7a23d02c3030056a59ff0cd856d95221e8da06.tar.gz",
+            .hash = "1220813b3d22d110b409ec8619fc1da2bc2ba2e71eb37b6a921ad228b485135793be",
         },
     },
 }
